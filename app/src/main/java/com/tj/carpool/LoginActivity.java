@@ -1,117 +1,142 @@
 package com.tj.carpool;
 
+import android.content.Intent;
 import android.os.Looper;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
+import com.tj.carpool.common.HttpHelper;
+import com.tj.carpool.datastructure.*;
+
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText usernameEditText,passwordEditText;
+    EditText phoneEditText,passwordEditText;
     Button loginButton,regButton;
-
+    String userType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        usernameEditText = (EditText) findViewById(R.id.login_edit_username);
+        userType = this.getIntent().getStringExtra("userType");
+
+        phoneEditText = (EditText) findViewById(R.id.login_edit_phone);
         passwordEditText = (EditText) findViewById(R.id.login_edit_pwd);
 
         loginButton = (Button) findViewById(R.id.login_btn_login);
         loginButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
-                final String username = usernameEditText.getText().toString();
+                final String phonenum = phoneEditText.getText().toString();
                 final String password = passwordEditText.getText().toString();
-
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String result = loginByPost(username,password);
                         Looper.prepare();
-                        Toast.makeText(LoginActivity.this,result,Toast.LENGTH_SHORT).show();
+                        try{
+                            String address = getResources().getString(R.string.server_addr);
+                            switch(userType)
+                            {
+                                case "passenger":
+                                    address+=getResources().getString(R.string.passenger_login);
+                                    break;
+                                default:
+                                    address+=getResources().getString(R.string.driver_login);
+                            }
+                            JSONObject sendJsonObject=new JSONObject() ;
+                            sendJsonObject.put("phoneNum", phonenum);
+                            sendJsonObject.put("password", password);
+                            HttpHelper httpHelper = new HttpHelper();
+                            boolean isSuccess = httpHelper.ServletPost(address,sendJsonObject);
+
+                            if(isSuccess)
+                            {
+                                JSONObject returnJsonObject = new JSONObject(httpHelper.getResult());
+                                if(!returnJsonObject.has("state"))
+                                {
+                                    Toast.makeText(LoginActivity.this,"登录失败",Toast.LENGTH_SHORT).show();
+                                }
+                                else
+                                {
+                                    int state = returnJsonObject.getInt("state");
+
+                                    if(state == 1)//登录成功
+                                    {
+                                        Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                                        String passengerJson = returnJsonObject.getString("userInfo");
+                                        //Passenger passenger = new Passenger();
+                                        Gson gson = new Gson();
+
+                                        Passenger passenger = gson.fromJson(passengerJson,Passenger.class);
+
+//                                        passenger.setID(passengerObject.getInt("ID"));
+//                                        passenger.setName(passengerObject.getString("Name"));
+//                                        passenger.setGender(passengerObject.getString("Gender"));
+//                                        passenger.setPhoneNum(passengerObject.getString("PhoneNum"));
+//                                        passenger.setUsername(passengerObject.getString("UserName"));
+//                                        //passenger.setRegtime(passengerObject.getString("RegTime"));
+
+                                        Bundle bundle = new Bundle();
+                                        bundle.putSerializable("userInfo",passenger);
+                                        bundle.putString("userType",userType);
+
+                                        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                                        intent.putExtras(bundle);
+
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                    else if(state == 3)//手机号未注册
+                                    {
+                                        Toast.makeText(LoginActivity.this,getResources().getString(R.string.no_phone),Toast.LENGTH_SHORT).show();
+                                    }
+                                    else if(state == 4)//密码错误
+                                    {
+                                        Toast.makeText(LoginActivity.this,getResources().getString(R.string.wrong_password),Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(LoginActivity.this,getResources().getString(R.string.unknown_error),Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                            }
+                        }catch(Exception e)
+                        {
+                            e.printStackTrace();
+                            Toast.makeText(LoginActivity.this,"异常",Toast.LENGTH_SHORT).show();
+                        }
                         Looper.loop();
                     }
                 }).start();
 
+
+
+
             }
         });
 
-
-    }
-
-    public String loginByPost(String username,String password){
-        String address = getResources().getString(R.string.server_addr)+"Login";
-        String result = "";
-        try{
-            URL url = new URL(address);//初始化URL
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");//请求方式
-
-            //超时信息
-            conn.setReadTimeout(5000);
-            conn.setConnectTimeout(5000);
-
-            //post方式不能设置缓存，需手动设置为false
-            conn.setUseCaches(false);
-
-            //我们请求的数据
-            String data = "username="+ URLEncoder.encode(username,"UTF-8")+
-                    "&password="+ URLEncoder.encode(password,"UTF-8");
-
-            //获取输出流
-            OutputStream out = conn.getOutputStream();
-
-            out.write(data.getBytes());
-            out.flush();
-            out.close();
-            conn.connect();
-
-            if (conn.getResponseCode() == 200) {
-                // 获取响应的输入流对象
-                InputStream is = conn.getInputStream();
-                // 创建字节输出流对象
-                ByteArrayOutputStream message = new ByteArrayOutputStream();
-                // 定义读取的长度
-                int len = 0;
-                // 定义缓冲区
-                byte buffer[] = new byte[1024];
-                // 按照缓冲区的大小，循环读取
-                while ((len = is.read(buffer)) != -1) {
-                    // 根据读取的长度写入到os对象中
-                    message.write(buffer, 0, len);
+        regButton = (Button) findViewById(R.id.login_btn_register);
+        regButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                if(userType.equals("passenger"))
+                {
+                    startActivity(new Intent(LoginActivity.this,PassengerRegister.class));
                 }
-                // 释放资源
-                is.close();
-                message.close();
-                // 返回字符串
-                result = new String(message.toByteArray());
-                //return result;
+                else
+                {
+                    startActivity(new Intent(LoginActivity.this,DriverRegister.class));
+                }
             }
-            else{
-                Toast.makeText(LoginActivity.this, "网络连接出错！", Toast.LENGTH_SHORT).show();
-            }
+        });
 
-        }catch (MalformedURLException e){
-            e.printStackTrace();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-
-        return result;
     }
+
 }

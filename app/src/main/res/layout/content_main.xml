@@ -8,26 +8,6 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <RelativeLayout
-        android:id="@+id/tab_title"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@android:color/transparent">
-        <TextView
-            android:id="@+id/txt_top"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textSize="18sp"
-            android:textColor="@android:color/darker_gray"
-            android:text= "@string/carpool" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@android:color/darker_gray"
-            android:layout_alignParentBottom="true"/>
-    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/tab_menu"
@@ -76,14 +56,14 @@
         android:background="@color/darkslategray"
         android:layout_above="@id/tab_menu"/>
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/tab_title"
-        android:layout_above="@id/tab_menu"
-        android:background="@android:color/transparent">
-    </FrameLayout>
+    <!--<FrameLayout-->
+        <!--android:id="@+id/fragment_container"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_below="@id/tab_title"-->
+        <!--android:layout_above="@id/tab_menu"-->
+        <!--android:background="@android:color/transparent">-->
+    <!--</FrameLayout>-->
 
 
 </RelativeLayout>
