@@ -1,6 +1,7 @@
 package com.tj.carpool;
 
 import android.content.Intent;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.tj.carpool.common.HttpHelper;
 import com.tj.carpool.datastructure.Passenger;
 
@@ -16,6 +18,7 @@ import org.json.JSONObject;
 
 public class PassengerRegister extends AppCompatActivity {
 
+    Passenger passenger;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -32,7 +35,7 @@ public class PassengerRegister extends AppCompatActivity {
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Passenger passenger = new Passenger();
+                passenger = new Passenger();
                 passenger.setUserName(usernameEditText.getText().toString().replace(" ",""));
                 passenger.setPassword(passwordEditText.getText().toString().replace(" ",""));
                 String repassword = repasswordEditText.getText().toString().replace(" ","");
@@ -62,47 +65,61 @@ public class PassengerRegister extends AppCompatActivity {
                 }
                 else
                 {
-                    try{
-                        JSONObject sendJsonObject = new JSONObject();
-                        sendJsonObject.put("info",passenger);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Looper.prepare();
+                            try{
 
-                        HttpHelper httpHelper = new HttpHelper();
-                        String address = getResources().getString(R.string.server_addr)+getResources().getString(R.string.passenger_register);
-                        httpHelper.ServletPost(address,sendJsonObject);
+                                Gson gson = new Gson();
+                                JSONObject sendJsonObject = new JSONObject(gson.toJson(passenger,Passenger.class));
 
-                        JSONObject returnJsonObject = new JSONObject(httpHelper.getResult());
-                        if(returnJsonObject.has("state"))
-                        {
-                            int state = returnJsonObject.getInt("state");
+                                HttpHelper httpHelper = new HttpHelper();
+                                String address = getResources().getString(R.string.server_addr)+getResources().getString(R.string.passenger_register);
+                                if(httpHelper.ServletPost(address,sendJsonObject))
+                                {
+                                    JSONObject returnJsonObject = new JSONObject(httpHelper.getResult());
+                                    if(returnJsonObject.has("state"))
+                                    {
+                                        int state = returnJsonObject.getInt("state");
 
-                            switch(state)
+                                        switch(state)
+                                        {
+                                            case 1://注册成功，跳转到登录界面
+                                                Intent intent = new Intent(PassengerRegister.this,LoginActivity.class);
+                                                intent.putExtra("userType","passenger");
+                                                Toast.makeText(PassengerRegister.this,getResources().getString(R.string.register_success),Toast.LENGTH_SHORT).show();
+                                                startActivity(intent);
+                                                finish();
+                                                break;
+                                            case 2://手机号已被注册
+                                                Toast.makeText(PassengerRegister.this,getResources().getString(R.string.exist_phone),Toast.LENGTH_SHORT).show();
+                                                break;
+                                            default:
+                                                Toast.makeText(PassengerRegister.this,getResources().getString(R.string.unknown_error),Toast.LENGTH_SHORT).show();
+                                                break;
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(PassengerRegister.this,getResources().getString(R.string.unknown_error),Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                else
+                                {
+                                    Toast.makeText(PassengerRegister.this,getResources().getString(R.string.server_connect_fail),Toast.LENGTH_SHORT).show();
+                                }
+
+
+
+                            }catch (Exception e)
                             {
-                                case 1://注册成功，跳转到登录界面
-                                    Intent intent = new Intent(PassengerRegister.this,LoginActivity.class);
-                                    intent.putExtra("userType","passenger");
-                                    Toast.makeText(PassengerRegister.this,getResources().getString(R.string.register_success),Toast.LENGTH_SHORT).show();
-                                    startActivity(intent);
-                                    finish();
-                                    break;
-                                case 2://手机号已被注册
-                                    Toast.makeText(PassengerRegister.this,getResources().getString(R.string.exist_phone),Toast.LENGTH_SHORT).show();
-                                    break;
-                                default:
-                                    Toast.makeText(PassengerRegister.this,getResources().getString(R.string.unknown_error),Toast.LENGTH_SHORT).show();
-                                    break;
-
+                                e.printStackTrace();
                             }
+                            Looper.loop();
                         }
-                        else
-                        {
-                            Toast.makeText(PassengerRegister.this,getResources().getString(R.string.server_connect_fail),Toast.LENGTH_SHORT).show();
-                        }
-
-                    }catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-
+                    }).start();
                 }
 
             }

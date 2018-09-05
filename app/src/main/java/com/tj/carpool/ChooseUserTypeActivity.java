@@ -14,26 +14,31 @@ public class ChooseUserTypeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_user_type);
 
-        //final RadioButton passengerBtn = (RadioButton) findViewById(R.id.btn_radio_passenger);
-        final RadioButton driverBtn = (RadioButton) findViewById(R.id.btn_radio_driver);
 
-        Button nextStepBtn = (Button) findViewById(R.id.btn_next);
+        Button driverBtn = (Button) findViewById(R.id.btn_driver);
+        Button passengerBtn = (Button) findViewById(R.id.btn_passenger);
 
-        nextStepBtn.setOnClickListener(new View.OnClickListener() {
+        driverBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String userType = "passenger";
-                if(driverBtn.isChecked())
-                {
-                    userType = "driver";
-                }
-//                Bundle bundle = new Bundle();
-//                bundle.putString("userType",userType);
 
                 Intent intent = new Intent(ChooseUserTypeActivity.this,LoginActivity.class);
-                intent.putExtra("userType",userType);
+                intent.putExtra("userType","driver");
 
                 startActivity(intent);
+                finish();
+            }
+        });
+
+        passengerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(ChooseUserTypeActivity.this,LoginActivity.class);
+                intent.putExtra("userType","passenger");
+
+                startActivity(intent);
+                finish();
             }
         });
     }

@@ -40,7 +40,7 @@
         android:layout_width="720dp"
         android:layout_height="173dp"
         android:layout_alignParentTop="true"
-        android:src="@drawable/car" />
+        android:src="@drawable/logo" />
 
 <EditText
     android:layout_width="400dp"

@@ -2,6 +2,7 @@ package com.tj.carpool;
 
 import android.content.Intent;
 import android.os.Looper;
+import android.service.chooser.ChooserTarget;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +21,15 @@ public class LoginActivity extends AppCompatActivity {
     EditText phoneEditText,passwordEditText;
     Button loginButton,regButton;
     String userType;
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(LoginActivity.this,ChooseUserTypeActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                                 JSONObject returnJsonObject = new JSONObject(httpHelper.getResult());
                                 if(!returnJsonObject.has("state"))
                                 {
-                                    Toast.makeText(LoginActivity.this,"登录失败",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this,getResources().getString(R.string.login_fail),Toast.LENGTH_SHORT).show();
                                 }
                                 else
                                 {
@@ -69,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     if(state == 1)//登录成功
                                     {
-                                        Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this,getResources().getString(R.string.login_success),Toast.LENGTH_SHORT).show();
                                         String passengerJson = returnJsonObject.getString("userInfo");
                                         //Passenger passenger = new Passenger();
                                         Gson gson = new Gson();
@@ -106,6 +116,11 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this,getResources().getString(R.string.unknown_error),Toast.LENGTH_SHORT).show();
                                     }
                                 }
+
+                            }
+                            else
+                            {
+                                Toast.makeText(LoginActivity.this,getResources().getString(R.string.server_connect_fail),Toast.LENGTH_SHORT).show();
 
                             }
                         }catch(Exception e)

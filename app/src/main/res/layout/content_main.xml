@@ -8,7 +8,13 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tab_menu"
+        android:background="@android:color/transparent">
+    </FrameLayout>
     <LinearLayout
         android:id="@+id/tab_menu"
         android:layout_width="match_parent"
@@ -17,7 +23,7 @@
         android:layout_alignParentBottom="true">
 
         <TextView
-            android:id="@+id/txt_start"
+            android:id="@+id/tab_start"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -27,7 +33,7 @@
             android:text="@string/carpool"/>
 
         <TextView
-            android:id="@+id/txt_nearby"
+            android:id="@+id/tab_list"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -37,14 +43,14 @@
             android:text="@string/nearby"/>
 
         <TextView
-            android:id="@+id/txt_user"
+            android:id="@+id/tab_user"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:drawablePadding="3dp"
             android:drawableTop="@drawable/tab_menu_user"
             android:gravity="center"
-            android:text="@string/user"/>
+            android:text="@string/my"/>
 
 
     </LinearLayout>

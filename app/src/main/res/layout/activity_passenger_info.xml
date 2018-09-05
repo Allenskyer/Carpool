@@ -170,16 +170,16 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!--<Button-->
-        <!--android:id="@+id/login_btn_register"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:background="@color/sandybrown"-->
-        <!--android:text="@string/update"-->
-        <!--android:textColor="#ffffff"-->
-        <!--android:textSize="20sp" />-->
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/sandybrown"
+        android:text="@string/save"
+        android:textColor="#ffffff"
+        android:textSize="20sp" />
 
 
 

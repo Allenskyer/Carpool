@@ -46,6 +46,19 @@
     <string name="update">修改</string>
     <string name="confirm">确定</string>
     <string name="personal_info">个人信息</string>
+    <string name="sign_out">注销</string>
+    <string name="origin">起点</string>
+    <string name="destination">终点</string>
+    <string name="map_click">地图点选</string>
+    <string name="start_carpool">发起拼车</string>
+    <string name="start_date">出发日期</string>
+    <string name="start_time">出发时刻</string>
+    <string name="number_of_people">人数</string>
+    <string name="cancel">取消</string>
+    <string name="want_to_drive">我要开车</string>
+    <string name="want_to_take">我要乘车</string>
+    <string name="save">保存</string>
+    <string name="my">我的</string>
 
     <!-- 反馈提示 -->
     <string name="no_user">用户不存在</string>
@@ -54,17 +67,30 @@
     <string name="exist_phone">该手机号已被注册</string>
     <string name="register_success">注册成功</string>
     <string name="login_success">登录成功</string>
+    <string name="login_fail">登录失败</string>
     <string name="server_connect_fail">服务器连接失败</string>
     <string name="unknown_error">未知错误</string>
+    <string name="blank_origin">起点不能为空</string>
+    <string name="blank_dest">终点不能为空</string>
+    <string name="place_cannot_select">该地点无法选择</string>
+    <string name="confirm_place">确定选择该地点吗</string>
+    <string name="click_operation">请放大地图后，点击想要设置的地点</string>
+    <string name="create_success">创建成功</string>
+    <string name="create_fail">创建失败</string>
+    <string name="update_success">修改成功</string>
+    <string name="update_fail">修改失败</string>
+    <string name="nothing_changed">您未做任何修改</string>
 
     <!-- 服务器地址 -->
     <string name="server_addr">http://47.99.75.250:8080/Carpool/</string>
     <string name="passenger_login">PLoginAction</string>
     <string name="driver_login">DLoginAction</string>
-    <string name="passenger_register">PassengerRegister</string>
-    <string name="driver_register">DriverRegister</string>
-    <string name="passenger_update">PassengerUpdate</string>
-    <string name="driver_update">DriverUpdate</string>
+    <string name="passenger_register">PRegisterAction</string>
+    <string name="driver_register">DRegisterAction</string>
+    <string name="passenger_update">PUpdateAction</string>
+    <string name="driver_update">DUpdateAction</string>
+    <string name="create_activity">ACreateAction</string>
+    <string name="nearby_activity">AListAction</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
